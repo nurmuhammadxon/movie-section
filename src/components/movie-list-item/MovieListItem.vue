@@ -1,13 +1,15 @@
 <template>
-    <li class="flex justify-between list-group-item " v-bind:class="[{ like: movie.like }, { favourite: movie.favourite }]">
-        <span class="list-group-item-lebal">{{ movie.name }}</span>
+    <li class="flex justify-between list-group-item "
+        v-bind:class="[{ like: movie.like }, { favourite: movie.favourite }]">
+        <span @click="$emit('onToggle', { id: movie.id, prop: 'like' })" class="list-group-item-lebal">{{ movie.name
+            }}</span>
         <input type="number" class="list-group-input" v-bind:value="movie.viewers">
         <div class=" flex justify-center items-center">
-            <button type="button" class="btn-cookie">
+            <button @click="$emit('onToggle', { id: movie.id, prop: 'favourite' })" type="button" class="btn-cookie">
                 <i class='bx bxs-cookie'></i>
             </button>
 
-            <button type="button" class="btn-trash">
+            <button @click="$emit('onRemove', movie.id)" type="button" class="btn-trash">
                 <i class='bx bxs-trash'></i>
             </button>
 
@@ -22,6 +24,14 @@ export default {
         movie: {
             type: Object,
             required: true,
+        },
+    },
+    methods: {
+        onLikeClick() {
+            this.$emit('onLike', this.movie.id)
+        },
+        onFavouriteClick() {
+            this.$emit('onFavourite', this.movie.id)
         }
     }
 }

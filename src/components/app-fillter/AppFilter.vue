@@ -1,17 +1,43 @@
 <template>
     <div class="app-fillter">
-        <button class="border-[1px] border-black p-[5px] bg-black text-white ">Barcha kinolar</button>
-        <button
-            class="border-[1px] border-black p-[5px] bg-white text-black hover:bg-black hover:text-white transition duration-150">Mashhur
+        <button class="border-[1px] border-black p-[5px] transition duration-150"
+            :class="filterName === 'all' ? 'bg-black text-white' : 'bg-white text-black'"
+            @click="filterHandler('all')">Barcha
             kinolar</button>
-        <button
-            class="border-[1px] border-black p-[5px] bg-white text-black hover:bg-black hover:text-white transition duration-150">Eng
+        <button class="border-[1px] border-black p-[5px] transition duration-150"
+            :class="filterName === 'popular' ? 'bg-black text-white' : 'bg-white text-black'"
+            @click="filterHandler('popular')">Mashhur
+            kinolar</button>
+        <button class="border-[1px] border-black p-[5px] transition duration-150"
+            :class="filterName === 'mostViewers' ? 'bg-black text-white' : 'bg-white text-black'"
+            @click="filterHandler('mostViewers')">Eng
             ko'p ko'rilgan kinolar</button>
     </div>
 </template>
 
 <script>
 export default {
+    props: {
+        updateFilterHandler: {
+            type: Function,
+            required: true,
+        },
+        filterName: {
+            type: String,
+            required: true,
+        },
+    },
+    data() {
+        return {
+            filter: 'all',
+        }
+    },
+    methods: {
+        filterHandler(filter) {
+            this.filter = filter
+            this.updateFilterHandler(this.filter)
+        }
+    },
 }
 </script>
 

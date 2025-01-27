@@ -4,21 +4,22 @@
       <AppInfo v-bind:allMoviesCount="movies.length"
         v-bind:favouriteMoviesCount="movies.filter(c => c.favourite).length" />
       <div class="search-panel">
-        <SearchPanel />
-        <AppFilter />
+        <SearchPanel :updateTermHandler="updateTermHandler" />
+        <AppFilter :updateFilterHandler="updateFilterHandler" :filterName="filter" />
       </div>
-      <MovieList v-bind:movies="movies" />
+      <MovieList :movies="onFilterHandler(onSearchHandler(movies, term), filter)" @onToggle="onToggleHandler"
+        @onRemove="onRemoveHandler" />
       <MoiveAddForm @creatMovie="creatMovie" />
     </div>
   </div>
 </template>
 
 <script>
-import AppInfo from "@/components/app-info/Appinfo.vue"
-import SearchPanel from '@/components/search-panel/SearchPanel.vue'
+import AppInfo from "../app-info/Appinfo.vue"
+import SearchPanel from '../search-panel/SearchPanel.vue'
 import AppFilter from '../app-fillter/AppFilter.vue'
 import MovieList from '../movie-list/MovieList.vue'
-import MoiveAddForm from '../movie-add-form/MoiveAddForm.vue'
+import MoiveAddForm from '../movie-add-form/MoveAddForm.vue'
 
 export default {
   components: {
@@ -36,25 +37,65 @@ export default {
           viewers: 811,
           favourite: false,
           like: true,
+          id: 1,
         },
         {
           name: "Forsaj",
           viewers: 462,
           favourite: false,
           like: false,
+          id: 2,
         },
         {
           name: "Yangi o'rgimchak odam",
-          viewers: 243,
+          viewers: 643,
           favourite: true,
           like: false,
+          id: 3,
         },
       ],
+      term: '',
+      filter: 'all'
     }
   },
   methods: {
     creatMovie(item) {
+      item.id = this.movies.length + 1
       this.movies.push(item)
+    },
+    onToggleHandler({ id, prop }) {
+      this.movies = this.movies.map(item => {
+        if (item.id == id) {
+          return { ...item, [prop]: !item[prop] }
+        }
+        return item
+      })
+    },
+    onRemoveHandler(id) {
+      this.movies = this.movies.filter(c => c.id !== id)
+    },
+    onSearchHandler(arr, term) {
+      if (term.length === 0) {
+        return arr
+      }
+      term = term.toLowerCase()
+      return arr.filter(c => c.name.toLowerCase().indexOf(term) > -1)
+    },
+    onFilterHandler(arr, filter) {
+      switch (filter) {
+        case 'popular':
+          return arr.filter(c => c.like)
+        case 'mostViewers':
+          return arr.filter(c => c.viewers > 500)
+        default:
+          return arr
+      }
+    },
+    updateTermHandler(term) {
+      this.term = term
+    },
+    updateFilterHandler(filter) {
+      this.filter = filter
     }
   }
 }

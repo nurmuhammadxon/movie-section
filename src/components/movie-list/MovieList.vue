@@ -1,6 +1,7 @@
 <template>
     <ul class="movie-list">
-        <MovieListItem v-for="movie in movies" v-bind:movie="movie" />
+        <MovieListItem v-for="movie in movies" :movie="movie" :key="movie.id" @onToggle="$emit('onToggle', $event)"
+            @onRemove="$emit('onRemove', $event)" />
     </ul>
 </template>
 
