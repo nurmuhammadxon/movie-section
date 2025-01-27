@@ -10,31 +10,12 @@ export default {
     components: {
         MovieListItem,
     },
-    data() {
-        return {
-            movies: [
-                {
-                    name: "Qashqirlar makoni",
-                    viewers: 811,
-                    favourite: false,
-                    like: true,
-                },
-                {
-                    name: "Forsaj",
-                    viewers: 462,
-                    favourite: false,
-                    like: false,
-                },
-                {
-                    name: "Yangi o'rgimchak odam",
-                    viewers: 243,
-                    favourite: true,
-                    like: false,
-                },
-            ],
-        }
-    }
-
+    props: {
+        movies: {
+            type: Array,
+            required: true,
+        },
+    },
 }
 </script>
 

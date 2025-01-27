@@ -1,13 +1,14 @@
 <template>
   <div class="app">
     <div class="container">
-      <AppInfo />
+      <AppInfo v-bind:allMoviesCount="movies.length"
+        v-bind:favouriteMoviesCount="movies.filter(c => c.favourite).length" />
       <div class="search-panel">
         <SearchPanel />
         <AppFilter />
       </div>
-      <MovieList />
-      <MoiveAddForm />
+      <MovieList v-bind:movies="movies" />
+      <MoiveAddForm @creatMovie="creatMovie" />
     </div>
   </div>
 </template>
@@ -26,6 +27,35 @@ export default {
     AppFilter,
     MovieList,
     MoiveAddForm,
+  },
+  data() {
+    return {
+      movies: [
+        {
+          name: "Qashqirlar makoni",
+          viewers: 811,
+          favourite: false,
+          like: true,
+        },
+        {
+          name: "Forsaj",
+          viewers: 462,
+          favourite: false,
+          like: false,
+        },
+        {
+          name: "Yangi o'rgimchak odam",
+          viewers: 243,
+          favourite: true,
+          like: false,
+        },
+      ],
+    }
+  },
+  methods: {
+    creatMovie(item) {
+      this.movies.push(item)
+    }
   }
 }
 </script>
