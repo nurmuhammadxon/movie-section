@@ -3,10 +3,10 @@
     <div class="container">
       <AppInfo v-bind:allMoviesCount="movies.length"
         v-bind:favouriteMoviesCount="movies.filter(c => c.favourite).length" />
-      <div class="search-panel">
+      <Box>
         <SearchPanel :updateTermHandler="updateTermHandler" />
         <AppFilter :updateFilterHandler="updateFilterHandler" :filterName="filter" />
-      </div>
+      </Box>
       <MovieList :movies="onFilterHandler(onSearchHandler(movies, term), filter)" @onToggle="onToggleHandler"
         @onRemove="onRemoveHandler" />
       <MoiveAddForm @creatMovie="creatMovie" />
@@ -113,13 +113,5 @@ export default {
   background-color: #fff;
   margin: 0 auto;
   padding: 5rem 0;
-}
-
-.search-panel {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background-color: #fcfaf5;
-  border-radius: 4px;
-  box-shadow: 15px 15px 15px rgb(0, 0, 0, 0.15);
 }
 </style>

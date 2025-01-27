@@ -1,17 +1,10 @@
 <template>
-    <div class="app-fillter">
-        <button class="border-[1px] border-black p-[5px] transition duration-150"
-            :class="filterName === 'all' ? 'bg-black text-white' : 'bg-white text-black'"
-            @click="filterHandler('all')">Barcha
-            kinolar</button>
-        <button class="border-[1px] border-black p-[5px] transition duration-150"
-            :class="filterName === 'popular' ? 'bg-black text-white' : 'bg-white text-black'"
-            @click="filterHandler('popular')">Mashhur
-            kinolar</button>
-        <button class="border-[1px] border-black p-[5px] transition duration-150"
-            :class="filterName === 'mostViewers' ? 'bg-black text-white' : 'bg-white text-black'"
-            @click="filterHandler('mostViewers')">Eng
-            ko'p ko'rilgan kinolar</button>
+    <div>
+        <PrimaryButton class="border-[1px] border-black p-[5px] transition duration-150" v-for="btn in filterButtons"
+            :key="btn.name" :class="filterName === btn.name ? 'bg-black text-white' : 'bg-white text-black'"
+            @click="filterHandler(btn.name)">
+            {{ btn.title }}
+        </PrimaryButton>
     </div>
 </template>
 
@@ -29,6 +22,20 @@ export default {
     },
     data() {
         return {
+            filterButtons: [
+                {
+                    title: "Barcha kinolar",
+                    name: "all",
+                },
+                {
+                    title: "Mashhur kinolar",
+                    name: "popular",
+                },
+                {
+                    title: "Eng ko'p ko'rilgan kinolar",
+                    name: "mostViewers",
+                },
+            ],
             filter: 'all',
         }
     },
@@ -41,10 +48,4 @@ export default {
 }
 </script>
 
-<style scoped>
-.app-fillter {
-    border: 1px solid #000;
-    display: inline-block;
-    border-radius: 4px;
-}
-</style>
+<style scoped></style>
