@@ -7,7 +7,13 @@
         <SearchPanel :updateTermHandler="updateTermHandler" />
         <AppFilter :updateFilterHandler="updateFilterHandler" :filterName="filter" />
       </Box>
-      <MovieList :movies="onFilterHandler(onSearchHandler(movies, term), filter)" @onToggle="onToggleHandler"
+      <Box v-if="!movies.length && !isLoading">
+        <p class="text-center text-2xl font-bold text-red-600">Kinolar yo'q</p>
+      </Box>
+      <Box v-else-if="isLoading" class="flex justify-center">
+        <Loading />
+      </Box>
+      <MovieList v-else :movies="onFilterHandler(onSearchHandler(movies, term), filter)" @onToggle="onToggleHandler"
         @onRemove="onRemoveHandler" />
       <MoiveAddForm @creatMovie="creatMovie" />
     </div>
@@ -20,6 +26,7 @@ import SearchPanel from '../search-panel/SearchPanel.vue'
 import AppFilter from '../app-fillter/AppFilter.vue'
 import MovieList from '../movie-list/MovieList.vue'
 import MoiveAddForm from '../movie-add-form/MoveAddForm.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -31,31 +38,10 @@ export default {
   },
   data() {
     return {
-      movies: [
-        {
-          name: "Qashqirlar makoni",
-          viewers: 811,
-          favourite: false,
-          like: true,
-          id: 1,
-        },
-        {
-          name: "Forsaj",
-          viewers: 462,
-          favourite: false,
-          like: false,
-          id: 2,
-        },
-        {
-          name: "Yangi o'rgimchak odam",
-          viewers: 643,
-          favourite: true,
-          like: false,
-          id: 3,
-        },
-      ],
+      movies: [],
       term: '',
-      filter: 'all'
+      filter: 'all',
+      isLoading: false
     }
   },
   methods: {
@@ -86,7 +72,7 @@ export default {
         case 'popular':
           return arr.filter(c => c.like)
         case 'mostViewers':
-          return arr.filter(c => c.viewers > 500)
+          return arr.filter(c => c.viewers > 100)
         default:
           return arr
       }
@@ -96,8 +82,29 @@ export default {
     },
     updateFilterHandler(filter) {
       this.filter = filter
-    }
-  }
+    },
+    async fetchMovie() {
+      try {
+        this.isLoading = true
+        const { data } = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=15')
+        const newData = data.map(item => ({
+          id: item.id,
+          name: item.title,
+          like: false,
+          favourite: false,
+          viewers: item.id * 13,
+        }))
+        this.movies = newData
+      } catch (error) {
+        alert(error.message)
+      } finally {
+        this.isLoading = false
+      }
+    },
+  },
+  mounted() {
+    this.fetchMovie()
+  },
 }
 </script>
 
