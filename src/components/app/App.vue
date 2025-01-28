@@ -15,6 +15,21 @@
       </Box>
       <MovieList v-else :movies="onFilterHandler(onSearchHandler(movies, term), filter)" @onToggle="onToggleHandler"
         @onRemove="onRemoveHandler" />
+      <Box class="flex items-center justify-center">
+        <Pagination>
+          <li v-for="pageNumber in totalPage" :key="pageNumber">
+            <a href="#"
+              class="flex items-center justify-center leading-tight px-3 h-8 border border-gray-300 transition-all"
+              :class="[
+                pageNumber === page
+                  ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700'
+                  : 'text-gray-500 bg-white  hover:bg-gray-100 hover:text-gray-700'
+              ]" @click.prevent="goToPage(pageNumber)">
+              {{ pageNumber }}
+            </a>
+          </li>
+        </Pagination>
+      </Box>
       <MoiveAddForm @creatMovie="creatMovie" />
     </div>
   </div>
@@ -41,7 +56,10 @@ export default {
       movies: [],
       term: '',
       filter: 'all',
-      isLoading: false
+      isLoading: false,
+      limit: 10,
+      page: 1,
+      totalPage: 0,
     }
   },
   methods: {
@@ -72,7 +90,7 @@ export default {
         case 'popular':
           return arr.filter(c => c.like)
         case 'mostViewers':
-          return arr.filter(c => c.viewers > 100)
+          return arr.filter(c => c.viewers > 500)
         default:
           return arr
       }
@@ -86,14 +104,20 @@ export default {
     async fetchMovie() {
       try {
         this.isLoading = true
-        const { data } = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=15')
-        const newData = data.map(item => ({
+        const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+          params: {
+            _limit: this.limit,
+            _page: this.page,
+          },
+        })
+        const newData = response.data.map(item => ({
           id: item.id,
           name: item.title,
           like: false,
           favourite: false,
-          viewers: item.id * 13,
+          viewers: item.id * 10,
         }))
+        this.totalPage = Math.ceil(response.headers['x-total-count'] / this.limit)
         this.movies = newData
       } catch (error) {
         alert(error.message)
@@ -101,10 +125,18 @@ export default {
         this.isLoading = false
       }
     },
+    goToPage(pageNumber) {
+      this.page = pageNumber
+    }
   },
   mounted() {
     this.fetchMovie()
   },
+  watch: {
+    page() {
+      this.fetchMovie()
+    }
+  }
 }
 </script>
 
