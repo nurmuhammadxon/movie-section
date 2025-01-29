@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <div class="container">
-      <AppInfo v-bind:allMoviesCount="movies.length"
+      <AppInfo v-bind:allMoviesCount="totalPage * limit"
         v-bind:favouriteMoviesCount="movies.filter(c => c.favourite).length" />
       <Box>
         <SearchPanel :updateTermHandler="updateTermHandler" />
@@ -42,6 +42,7 @@ import AppFilter from '../app-fillter/AppFilter.vue'
 import MovieList from '../movie-list/MovieList.vue'
 import MoiveAddForm from '../movie-add-form/MoveAddForm.vue'
 import axios from 'axios'
+import { errorMessages } from 'vue/compiler-sfc'
 
 export default {
   components: {
@@ -63,9 +64,14 @@ export default {
     }
   },
   methods: {
-    creatMovie(item) {
-      item.id = this.movies.length + 1
-      this.movies.push(item)
+    async creatMovie(item) {
+      try {
+        const response = await axios.post('https://jsonplaceholder.typicode.com/posts', item)
+        const newData = { ...this.movies, response }
+        this.movies = newData
+      } catch (error) {
+        alert(error.message)
+      }
     },
     onToggleHandler({ id, prop }) {
       this.movies = this.movies.map(item => {
@@ -75,8 +81,15 @@ export default {
         return item
       })
     },
-    onRemoveHandler(id) {
-      this.movies = this.movies.filter(c => c.id !== id)
+    async onRemoveHandler(id) {
+      try {
+        const response = await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`)
+        console.log(response);
+        
+        this.movies = this.movies.filter(c => c.id !== id)
+      } catch (error) {
+        alert(error.message)
+      }
     },
     onSearchHandler(arr, term) {
       if (term.length === 0) {
